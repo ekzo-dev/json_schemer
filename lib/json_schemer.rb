@@ -25,6 +25,7 @@ require 'json_schemer/schema/base'
 require 'json_schemer/schema/draft4'
 require 'json_schemer/schema/draft6'
 require 'json_schemer/schema/draft7'
+require 'json_schemer/schema/draft2019_09'
 
 module JSONSchemer
   class UnsupportedMetaSchema < StandardError; end
@@ -41,7 +42,8 @@ module JSONSchemer
     'http://json-schema.org/schema#' => Schema::Draft4, # Version-less $schema deprecated after Draft 4
     'http://json-schema.org/draft-04/schema#' => Schema::Draft4,
     'http://json-schema.org/draft-06/schema#' => Schema::Draft6,
-    'http://json-schema.org/draft-07/schema#' => Schema::Draft7
+    'http://json-schema.org/draft-07/schema#' => Schema::Draft7,
+    'https://json-schema.org/draft/2019-09/schema' => Schema::Draft2019_09,
   }.freeze
 
   WINDOWS_URI_PATH_REGEX = /\A\/[a-z]:/i

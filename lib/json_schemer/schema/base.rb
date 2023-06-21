@@ -36,7 +36,7 @@ module JSONSchemer
 
       class << self
         def draft_name
-          name.split('::').last.downcase
+          name.split('::').last.downcase.sub('_', '-')
         end
 
         def meta_schema
