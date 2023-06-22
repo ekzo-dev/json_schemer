@@ -58,7 +58,7 @@ module JSONSchemer
 
         transfer_keywords = instance.schema.reject { |k, _| k.start_with?('$') }
         subinstance = instance.merge(
-          schema: schema.merge(transfer_keywords),
+          schema: schema.is_a?(Hash) ? schema.merge(transfer_keywords) : schema,
           schema_pointer: "#{ref_schema_pointer}#{ref_uri_pointer}",
           base_uri: base_uri
         )

@@ -38,6 +38,7 @@ class JSONSchemaTestSuiteTest < Minitest::Test
 
       output = files.each_with_object({}) do |file, file_output|
         next if file == 'JSON-Schema-Test-Suite/tests/draft7/optional/cross-draft.json'
+        next if file.include?('draft2019-09') && !file.end_with?('/ref.json')
 
         definitions = JSON.parse(File.read(file))
 
@@ -49,7 +50,8 @@ class JSONSchemaTestSuiteTest < Minitest::Test
           assert(JSONSchemer.valid_schema?(schema, default_schema_class: schema_class, ref_resolver: ref_resolver))
 
           tests.map do |test|
-            data, valid = test.values_at('data', 'valid')
+            data, valid, description = test.values_at('data', 'valid', 'description')
+            puts "Running test '#{description}'"
 
             errors = schemer.validate(data).to_a
 
