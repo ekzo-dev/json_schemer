@@ -43,8 +43,8 @@ module JSONSchemer
           @meta_schema ||= JSON.parse(Pathname.new(__dir__).join("#{draft_name}.json").read).freeze
         end
 
-        def meta_schemer
-          @meta_schemer ||= JSONSchemer.schema(meta_schema)
+        def meta_schemer(ref_resolver)
+          @meta_schemer ||= JSONSchemer.schema(meta_schema, ref_resolver: ref_resolver)
         end
       end
 
@@ -89,11 +89,11 @@ module JSONSchemer
       end
 
       def valid_schema?
-        self.class.meta_schemer.valid?(root)
+        self.class.meta_schemer(ref_resolver).valid?(root)
       end
 
       def validate_schema
-        self.class.meta_schemer.validate(root)
+        self.class.meta_schemer(ref_resolver).validate(root)
       end
 
     protected

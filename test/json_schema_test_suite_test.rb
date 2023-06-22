@@ -15,12 +15,18 @@ class JSONSchemaTestSuiteTest < Minitest::Test
 
   def test_json_schema_test_suite
     ref_resolver = JSONSchemer::CachedResolver.new do |uri|
+      puts "resolving #{uri}"
+      map = JSONSchemer::SCHEMA_CLASS_BY_META_SCHEMA
+
       if uri.host == 'localhost'
         path = Pathname.new(__dir__).join('..', 'JSON-Schema-Test-Suite', 'remotes', uri.path.gsub(/\A\//, ''))
         JSON.parse(path.read)
+      elsif map.include?("#{uri}#")
+        map.fetch("#{uri}#").meta_schema
+      elsif map.include?(uri.to_s)
+        map.fetch(uri.to_s).meta_schema
       else
-        map = JSONSchemer::SCHEMA_CLASS_BY_META_SCHEMA
-        map.fetch("#{uri}#") { map.fetch(uri.to_s) }.meta_schema
+        JSON.parse(Net::HTTP.get(uri))
       end
     end
 
@@ -28,7 +34,7 @@ class JSONSchemaTestSuiteTest < Minitest::Test
       files = Dir["JSON-Schema-Test-Suite/tests/#{schema_class.draft_name}/**/*.json"]
       fixture = Pathname.new(__dir__).join('fixtures', "#{schema_class.draft_name}.json")
 
-      assert(JSONSchemer.valid_schema?(schema_class.meta_schema))
+      assert(JSONSchemer.valid_schema?(schema_class.meta_schema, ref_resolver: ref_resolver))
 
       output = files.each_with_object({}) do |file, file_output|
         next if file == 'JSON-Schema-Test-Suite/tests/draft7/optional/cross-draft.json'
@@ -40,7 +46,7 @@ class JSONSchemaTestSuiteTest < Minitest::Test
 
           schemer = schema_class.new(schema, ref_resolver: ref_resolver, regexp_resolver: 'ecma')
           assert(schemer.valid_schema?)
-          assert(JSONSchemer.valid_schema?(schema, default_schema_class: schema_class))
+          assert(JSONSchemer.valid_schema?(schema, default_schema_class: schema_class, ref_resolver: ref_resolver))
 
           tests.map do |test|
             data, valid = test.values_at('data', 'valid')

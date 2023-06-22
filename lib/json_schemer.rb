@@ -83,12 +83,12 @@ module JSONSchemer
       schema_class.new(schema, **options)
     end
 
-    def valid_schema?(schema, default_schema_class: DEFAULT_SCHEMA_CLASS)
-      schema(schema, default_schema_class: default_schema_class).valid_schema?
+    def valid_schema?(schema, default_schema_class: DEFAULT_SCHEMA_CLASS, ref_resolver: nil)
+      schema(schema, default_schema_class: default_schema_class, ref_resolver: ref_resolver).valid_schema?
     end
 
-    def validate_schema(schema, default_schema_class: DEFAULT_SCHEMA_CLASS)
-      schema(schema, default_schema_class: default_schema_class).validate_schema
+    def validate_schema(schema, default_schema_class: DEFAULT_SCHEMA_CLASS, ref_resolver: nil)
+      schema(schema, default_schema_class: default_schema_class, ref_resolver: ref_resolver).validate_schema
     end
   end
 end
