@@ -131,7 +131,8 @@ module JSONSchemer
 
         if ref
           validate_ref(instance, ref, &block)
-          return
+          # from draft 2019-09 and up additional keywords are allowed with $ref
+          return if [Draft4, Draft6, Draft7].include?(self.class)
         end
 
         instance.base_uri = join_uri(instance.base_uri, id)
